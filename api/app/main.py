@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+
 from app.core.config import settings
 from app.api.router import api_router
 from app.db.init_db import init_demo_data
@@ -10,8 +11,8 @@ app = FastAPI(
     version="1.0.0",
 )
 
-from fastapi.middleware.cors import CORSMiddleware
-After app = FastAPI() add exactly this:
+
+
 
 
 app.add_middleware(

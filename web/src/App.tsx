@@ -2,10 +2,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+
 import { AuthProvider } from "@/contexts/AuthContext";
 import { DataProvider } from "@/contexts/DataContext";
 import { AppLayout } from "@/components/layout/AppLayout";
+
 import { DashboardPage } from "@/pages/DashboardPage";
 import { EquipmentListPage } from "@/pages/EquipmentListPage";
 import { EquipmentDetailPage } from "@/pages/EquipmentDetailPage";
@@ -16,8 +18,45 @@ import { RequestFormPage } from "@/pages/RequestFormPage";
 import { CalendarPage } from "@/pages/CalendarPage";
 import { ReportsPage } from "@/pages/ReportsPage";
 import NotFound from "./pages/NotFound";
+import { ScanPage } from "@/pages/ScanPage";
 
 const queryClient = new QueryClient();
+
+function RouterSwitch() {
+  const location = useLocation();
+  const isScanRoute = location.pathname.startsWith("/scan");
+
+  if (isScanRoute) {
+    // Public (no login)
+    return (
+      <Routes>
+        <Route path="/scan" element={<ScanPage />} />
+        <Route path="/scan/:id" element={<ScanPage />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    );
+  }
+
+  // Protected app
+  return (
+    <AppLayout>
+      <Routes>
+        <Route path="/" element={<DashboardPage />} />
+        <Route path="/equipment" element={<EquipmentListPage />} />
+        <Route path="/equipment/new" element={<EquipmentFormPage />} />
+        <Route path="/equipment/:id" element={<EquipmentDetailPage />} />
+        <Route path="/equipment/:id/edit" element={<EquipmentFormPage />} />
+        <Route path="/teams" element={<TeamsPage />} />
+        <Route path="/requests" element={<RequestsPage />} />
+        <Route path="/requests/new" element={<RequestFormPage />} />
+        <Route path="/requests/:id/edit" element={<RequestFormPage />} />
+        <Route path="/calendar" element={<CalendarPage />} />
+        <Route path="/reports" element={<ReportsPage />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </AppLayout>
+  );
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -27,22 +66,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <AppLayout>
-              <Routes>
-                <Route path="/" element={<DashboardPage />} />
-                <Route path="/equipment" element={<EquipmentListPage />} />
-                <Route path="/equipment/new" element={<EquipmentFormPage />} />
-                <Route path="/equipment/:id" element={<EquipmentDetailPage />} />
-                <Route path="/equipment/:id/edit" element={<EquipmentFormPage />} />
-                <Route path="/teams" element={<TeamsPage />} />
-                <Route path="/requests" element={<RequestsPage />} />
-                <Route path="/requests/new" element={<RequestFormPage />} />
-                <Route path="/requests/:id/edit" element={<RequestFormPage />} />
-                <Route path="/calendar" element={<CalendarPage />} />
-                <Route path="/reports" element={<ReportsPage />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </AppLayout>
+            <RouterSwitch />
           </BrowserRouter>
         </DataProvider>
       </AuthProvider>
@@ -51,3 +75,4 @@ const App = () => (
 );
 
 export default App;
+

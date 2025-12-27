@@ -10,15 +10,21 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# CORS
-origins = settings.cors_origins_list
+from fastapi.middleware.cors import CORSMiddleware
+After app = FastAPI() add exactly this:
+
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins if origins else ["*"],
+    allow_origins=[
+        "https://gear-guard-odoo.vercel.app",  # frontend
+        "http://localhost:3000",               # local dev (optional)
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
 

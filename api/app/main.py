@@ -22,6 +22,10 @@ app.add_middleware(
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
+@app.get("/healthz", include_in_schema=False)
+def healthz():
+    return {"status": "ok"}
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
